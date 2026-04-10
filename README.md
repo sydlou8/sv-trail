@@ -248,9 +248,9 @@ public class ExampleAlias extends ExampleClass {
 
 }
 ```
-and importing that class instead... or the second option would have been explicitly call the class like `java.util.List`
+and importing that class instead... or the second option would have been explicitly call the class inline like `java.util.List`
 
-I just ended up calling them explicitly.
+I just ended up calling them explicitly inline.
 
 Another issue I had was when I was running Spring Boot. A lot of times my game would not even run because there would be a tiny typos that would have to search for in the project.
 
