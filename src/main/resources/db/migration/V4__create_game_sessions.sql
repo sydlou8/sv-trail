@@ -1,0 +1,25 @@
+CREATE TABLE game_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    current_location_id UUID NOT NULL REFERENCES locations(id),
+    role VARCHAR(255) NOT NULL,
+    state VARCHAR(255) NOT NULL DEFAULT 'ACTIVE',
+    loss_reason VARCHAR(255),
+    event_frequency VARCHAR(255) NOT NULL DEFAULT 'MOVEMENT_ONLY',
+    pending_event_id UUID REFERENCES events(id),
+    day_number INT NOT NULL DEFAULT 1,
+    cash INT NOT NULL,
+    morale INT NOT NULL,
+    hype INT NOT NULL,
+    bug_count INT NOT NULL,
+    coffee_supply INT NOT NULL,
+    started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CHECK (cash >= 0),
+    CHECK (morale >= 0 AND morale <= 100),
+    CHECK (hype >= 0 AND hype <= 100),
+    CHECK (bug_count >= 0),
+    CHECK (coffee_supply >= 0),
+    CHECK (day_number >= 1)
+);

@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: sv-trail
+  config:
+    import: optional:file:.env[.properties]
+  
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 864000000 # 1 day in milliseconds
+  clients:
+    weather:
+      api-url: https://api.open-meteo.com/v1
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
