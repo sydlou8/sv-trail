@@ -21,7 +21,7 @@ Install the following before cloning the project:
 
 #### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/sv-trail.git
+git clone https://github.com/sydlou8/sv-trail.git
 cd sv-trail
 ```
 
