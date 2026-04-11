@@ -1,5 +1,6 @@
 package sm.dev.sv_trail.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -7,11 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import sm.dev.sv_trail.model.dto.request.CreateGameRequest;
+import sm.dev.sv_trail.model.dto.response.EventChoiceResponse;
 import sm.dev.sv_trail.model.dto.response.GameStateResponse;
+import sm.dev.sv_trail.model.dto.response.PendingEventResponse;
+import sm.dev.sv_trail.model.entity.Event;
 import sm.dev.sv_trail.model.entity.GameSession;
 import sm.dev.sv_trail.model.entity.User;
 import sm.dev.sv_trail.model.entity.Location;
 import sm.dev.sv_trail.model.enums.GameState;
+import sm.dev.sv_trail.repository.EventChoiceRepository;
 import sm.dev.sv_trail.repository.GameSessionRepository;
 import sm.dev.sv_trail.repository.LocationRepository;
 import sm.dev.sv_trail.repository.UserRepository;
@@ -22,6 +27,7 @@ public class GameService {
     private final GameSessionRepository gameRepository;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
+    private final EventChoiceRepository eventChoiceRepository;
     
     @Transactional
     public GameStateResponse createGame(UUID userId, CreateGameRequest request) {
@@ -49,21 +55,7 @@ public class GameService {
         GameSession savedGameSession = gameRepository.save(gameSession);
 
         // Build a GameStateResponse based on the saved session to return to the client
-        return GameStateResponse.builder()
-            .id(savedGameSession.getId())
-            .state(savedGameSession.getState().name())
-            .role(savedGameSession.getRole().name())
-            .lossReason(null) // No loss reason at the start of the game
-            .cash(savedGameSession.getCash())
-            .morale(savedGameSession.getMorale())
-            .hype(savedGameSession.getHype())
-            .bugCount(savedGameSession.getBugCount())
-            .coffeeSupply(savedGameSession.getCoffeeSupply())
-            .dayNumber(savedGameSession.getDayNumber())
-            .currentCity(savedGameSession.getCurrentLocation().getCity())
-            .currentState(savedGameSession.getCurrentLocation().getState())
-            .currentTechCompany(savedGameSession.getCurrentLocation().getTechCompany())
-            .build();
+        return mapToGameStateResponse(savedGameSession);
 
     }
 
@@ -71,9 +63,44 @@ public class GameService {
     public GameStateResponse getCurrentState(UUID gameId, UUID userId) {
         GameSession gameSession = gameRepository.findByIdAndUserId(gameId, userId)
             .orElseThrow(() -> new IllegalArgumentException("Game session not found for the given user"));
-        String lossReason = gameSession.getLossReason() != null 
-            ? gameSession.getLossReason().name() : null;
+        return mapToGameStateResponse(gameSession);
+    }
+
+    // List all games for a user
+    @Transactional(readOnly = true)
+    public List<GameStateResponse> listAllGames(UUID userId) {
+        List<GameSession> gameSessions = gameRepository.findAllByUserId(userId)
+            .orElse(List.of());
         
+        return gameSessions.stream()
+            .map(this::mapToGameStateResponse)
+            .toList();
+    }
+
+    // helper method to convert GameSession to GameStateResponse
+    private GameStateResponse mapToGameStateResponse(GameSession gameSession) {
+        String lossReason = gameSession.getLossReason() != null
+            ? gameSession.getLossReason().name() : null;
+
+        PendingEventResponse pendingEvent = null;
+        if (gameSession.getPendingEvent() != null) {
+            Event event = gameSession.getPendingEvent();
+            List<EventChoiceResponse> choices = eventChoiceRepository.findByEventId(event.getId())
+                .orElse(List.of())
+                .stream()
+                .map(c -> EventChoiceResponse.builder()
+                    .id(c.getId())
+                    .description(c.getDescription())
+                    .build())
+                .toList();
+            pendingEvent = PendingEventResponse.builder()
+                .eventId(event.getId())
+                .title(event.getTitle())
+                .description(event.getDescription())
+                .choices(choices)
+                .build();
+        }
+
         return GameStateResponse.builder()
             .id(gameSession.getId())
             .state(gameSession.getState().name())
@@ -88,6 +115,7 @@ public class GameService {
             .currentCity(gameSession.getCurrentLocation().getCity())
             .currentState(gameSession.getCurrentLocation().getState())
             .currentTechCompany(gameSession.getCurrentLocation().getTechCompany())
+            .pendingEvent(pendingEvent)
             .build();
     }
 }

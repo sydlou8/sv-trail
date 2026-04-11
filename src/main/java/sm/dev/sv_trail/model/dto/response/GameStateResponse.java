@@ -19,5 +19,7 @@ public record GameStateResponse(
     int dayNumber,
     String currentCity,
     String currentState,
-    String currentTechCompany) {
+    String currentTechCompany,
+    // Pending event — non-null means a TRAVEL event is waiting to be resolved before the next turn
+    PendingEventResponse pendingEvent) {
 } 

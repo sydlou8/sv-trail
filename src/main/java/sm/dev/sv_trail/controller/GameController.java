@@ -1,5 +1,6 @@
 package sm.dev.sv_trail.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -71,5 +72,17 @@ public class GameController {
                 @AuthenticationPrincipal User user) {
         
         return ResponseEntity.ok(gameService.getCurrentState(gameId, user.getId()));
+    }
+    // list all games
+    @Operation(summary = "List all game sessions for the authenticated user",
+        description = "Returns a list of all game sessions associated with the authenticated user, including their current state and progress.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "List of game sessions returned"),
+        @ApiResponse(responseCode = "400", description = "Error retrieving game sessions")
+    })
+    @GetMapping("/all")
+    public ResponseEntity<List<GameStateResponse>> listAllGames(
+        @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(gameService.listAllGames(user.getId()));
     }
 }

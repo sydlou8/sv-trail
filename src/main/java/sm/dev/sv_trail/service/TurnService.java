@@ -17,6 +17,7 @@ import sm.dev.sv_trail.model.dto.request.TurnRequest;
 import sm.dev.sv_trail.model.dto.response.EventChoiceResponse;
 import sm.dev.sv_trail.model.dto.response.PendingEventResponse;
 import sm.dev.sv_trail.model.dto.response.TurnResponse;
+import sm.dev.sv_trail.model.entity.Event;
 import sm.dev.sv_trail.model.entity.EventChoice;
 import sm.dev.sv_trail.model.entity.GameSession;
 import sm.dev.sv_trail.model.enums.GameState;
@@ -42,8 +43,8 @@ public class TurnService {
         }
 
         if (gameSession.getPendingEvent() != null) {
-            var event = gameSession.getPendingEvent();
-            var choices = eventChoiceRepository.findByEventId(event.getId())
+            Event event = gameSession.getPendingEvent();
+            List<EventChoiceResponse> choices = eventChoiceRepository.findByEventId(event.getId())
                 .orElse(List.of())
                 .stream()
                 .map(c -> EventChoiceResponse.builder()
