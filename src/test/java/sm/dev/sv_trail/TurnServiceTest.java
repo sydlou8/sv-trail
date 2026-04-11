@@ -41,9 +41,6 @@ class TurnServiceTest {
         User user = mock(User.class);
         when(user.getId()).thenReturn(UUID.randomUUID());
         Location location = mock(Location.class);
-        when(location.getCity()).thenReturn("San Jose");
-        when(location.getState()).thenReturn("CA");
-        when(location.getOrderIndex()).thenReturn(5);
         return GameSession.builder()
             .user(user).currentLocation(location)
             .cash(cash).morale(morale).hype(50).bugCount(0).coffeeSupply(5)
@@ -65,8 +62,11 @@ class TurnServiceTest {
         when(actionStrategyFactory.getStrategy(any())).thenReturn(mockStrategy);
         when(gameSessionRepository.findByIdAndUserId(sessionId, userId))
             .thenReturn(Optional.of(session));
+        when(session.getCurrentLocation().getOrderIndex()).thenReturn(5);
         when(locationRepository.findFirstByOrderIndexGreaterThan(5))
             .thenReturn(Optional.empty()); // last location
+        when(session.getCurrentLocation().getCity()).thenReturn("San Jose");
+        when(session.getCurrentLocation().getState()).thenReturn("CA");
 
         TurnResponse result = turnService.processTurn(sessionId, userId, new TurnRequest(ActionType.REST));
         

@@ -16,6 +16,7 @@ import sm.dev.sv_trail.model.entity.GameSession;
 import sm.dev.sv_trail.model.entity.Location;
 import sm.dev.sv_trail.model.entity.User;
 import sm.dev.sv_trail.model.enums.ActionType;
+import sm.dev.sv_trail.model.enums.GameState;
 import sm.dev.sv_trail.repository.LocationRepository;
 import sm.dev.sv_trail.service.strategies.TravelStrategy;
 
@@ -43,6 +44,7 @@ public class TravelStrategyTest {
             .currentLocation(currentLocation)
             .cash(1000)
             .dayNumber(1)
+            .state(GameState.ACTIVE)
             .build();
 
         when(locationRepository.findFirstByOrderIndexGreaterThan(1)).thenReturn(java.util.Optional.of(nextLocation));
