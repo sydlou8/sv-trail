@@ -65,7 +65,7 @@ public class TurnService {
         TurnResponse turnResponse = strategy.executeAction(gameSession);
 
         // Events only trigger on TRAVEL (TravelStrategy.triggersEvent() returns true).
-        // A random source is chosen: seeded story event, weather forecast, or trending GitHub repo.
+        // A random source is chosen: seeded story event, weather forecast, etc.
         EventSourceResult eventResult = EventSourceResult.empty();
         if (strategy.triggersEvent(gameSession)) {
             eventResult = eventSourceFactory.getRandom(gameSession);

@@ -2,6 +2,8 @@ package sm.dev.sv_trail.service.factories;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Collections;
+import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import sm.dev.sv_trail.model.entity.GameSession;
@@ -21,8 +23,8 @@ public class EventSourceFactory {
      * when one is available.
      */
     public EventSourceResult getRandom(GameSession gameSession) {
-        List<EventSourceStrategy> shuffled = new java.util.ArrayList<>(strategies);
-        java.util.Collections.shuffle(shuffled, new Random());
+        List<EventSourceStrategy> shuffled = new ArrayList<>(strategies);
+        Collections.shuffle(shuffled, new Random());
         for (EventSourceStrategy strategy : shuffled) {
             EventSourceResult result = strategy.apply(gameSession);
             if (!isEmpty(result)) return result;
