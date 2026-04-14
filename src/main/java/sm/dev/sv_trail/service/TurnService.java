@@ -107,7 +107,7 @@ public class TurnService {
         if (gameSession.getPendingEvent() == null) {
             throw new IllegalStateException("No pending event to resolve!");
         }
-        gameSession.setMorale(50);
+        
         EventChoice eventChoice = eventChoiceRepository.findById(choiceRequest.choiceId())
             .orElseThrow(() -> new IllegalArgumentException("Event choice not found for the given ID!"));
         if (!eventChoice.getEvent().getId().equals(gameSession.getPendingEvent().getId())) {
