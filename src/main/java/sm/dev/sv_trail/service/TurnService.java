@@ -82,7 +82,13 @@ public class TurnService {
                 .findFirstByOrderIndexGreaterThan(gameSession.getCurrentLocation().getOrderIndex())
                 .isEmpty();
             if (isLastLocation && gameSession.getPendingEvent() == null) {
-                gameSession.setState(GameState.WON);
+                int final_score = gameSession.getCash() + (5* gameSession.getMorale()) - (10 * gameSession.getBugCount());
+                gameSession.setFinalScore(final_score);
+                if (final_score > 0) {            
+                    gameSession.setState(GameState.WON);
+                } else {
+                    gameSession.setState(GameState.LOST);
+                }
                 turnResponse = buildResponse(gameSession, turnResponse, eventResult);
             }
         }
@@ -101,7 +107,7 @@ public class TurnService {
         if (gameSession.getPendingEvent() == null) {
             throw new IllegalStateException("No pending event to resolve!");
         }
-
+        gameSession.setMorale(50);
         EventChoice eventChoice = eventChoiceRepository.findById(choiceRequest.choiceId())
             .orElseThrow(() -> new IllegalArgumentException("Event choice not found for the given ID!"));
         if (!eventChoice.getEvent().getId().equals(gameSession.getPendingEvent().getId())) {
@@ -170,6 +176,7 @@ public class TurnService {
             .eventChoices(result.pendingChoices())
             .weatherDescription(result.weatherDescription())
             .temperature(result.temperature())
+            .finalScore(gameSession.getFinalScore())
             .build();
     }
 }

@@ -1,0 +1,3 @@
+ALTER TABLE game_sessions DROP CONSTRAINT game_sessions_cash_check;
+ALTER TABLE game_sessions DROP CONSTRAINT game_sessions_morale_check;
+ALTER TABLE game_sessions DROP CONSTRAINT game_sessions_hype_check;

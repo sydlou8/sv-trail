@@ -37,7 +37,9 @@ public class GameSession {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pending_event_id")
     private Event pendingEvent;
-
+    @Column(name = "final_score")
+    private int finalScore;
+    
     @Column(name = "day_number", nullable = false)
     private int dayNumber;
     private int cash;

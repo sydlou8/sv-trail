@@ -29,6 +29,8 @@ public record TurnResponse(
     int bugCount,
     int coffeeSupply,
 
+    int finalScore,
+
     // Game State
     int dayNumber,
     String currentCity,
